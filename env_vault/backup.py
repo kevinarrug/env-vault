@@ -40,8 +40,7 @@ def list_backups(vault_dir: str) -> List[Path]:
 
 
 def restore_backup(vault_dir: str, backup_path: str) -> None:
-    """Overwrite the current vault.json with a backup."""
-    src = Path(backup_path)
+    """Overwrite the current vault.json with a backup."""\n    src = Path(backup_path)
     if not src.exists():
         raise FileNotFoundError(f"Backup not found: {src}")
 
@@ -65,8 +64,16 @@ def delete_backup(backup_path: str) -> None:
 
 def purge_backups(vault_dir: str, keep: int = 5) -> List[Path]:
     """Delete old backups, keeping the *keep* most recent. Returns deleted paths."""
+    if keep < 0:
+        raise ValueError(f"keep must be a non-negative integer, got {keep}")
     backups = list_backups(vault_dir)
     to_delete = backups[: max(0, len(backups) - keep)]
     for p in to_delete:
         p.unlink()
     return to_delete
+
+
+def get_latest_backup(vault_dir: str) -> Optional[Path]:
+    """Return the most recent backup file, or None if no backups exist."""
+    backups = list_backups(vault_dir)
+    return backups[-1] if backups else None
