@@ -45,8 +45,20 @@ def list_cmd(vault_dir: str) -> None:
 @backup_cmd.command("restore")
 @click.argument("backup_path")
 @click.option("--vault-dir", default=".", show_default=True, help="Vault directory.")
-def restore_cmd(backup_path: str, vault_dir: str) -> None:
+@click.option(
+    "--yes",
+    "-y",
+    is_flag=True,
+    default=False,
+    help="Skip confirmation prompt.",
+)
+def restore_cmd(backup_path: str, vault_dir: str, yes: bool) -> None:
     """Restore the vault from BACKUP_PATH."""
+    if not yes:
+        click.confirm(
+            f"Restore vault from '{backup_path}'? This will overwrite the current vault.",
+            abort=True,
+        )
     try:
         restore_backup(vault_dir, backup_path)
         click.echo(f"Vault restored from {backup_path}")
