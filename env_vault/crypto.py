@@ -11,6 +11,9 @@ NONCE_SIZE = 12
 KEY_SIZE = 32
 ITERATIONS = 600_000
 
+# Minimum token length: salt + nonce + GCM auth tag (16 bytes)
+MIN_TOKEN_BYTES = SALT_SIZE + NONCE_SIZE + 16
+
 
 def derive_key(passphrase: str, salt: bytes) -> bytes:
     """Derive a 256-bit key from a passphrase using PBKDF2-SHA256."""
@@ -41,8 +44,10 @@ def decrypt(token: str, passphrase: str) -> str:
     except Exception as exc:
         raise ValueError("Invalid token: base64 decoding failed.") from exc
 
-    if len(raw) < SALT_SIZE + NONCE_SIZE + 16:
-        raise ValueError("Invalid token: data too short.")
+    if len(raw) < MIN_TOKEN_BYTES:
+        raise ValueError(
+            f"Invalid token: data too short (got {len(raw)} bytes, need at least {MIN_TOKEN_BYTES})."
+        )
 
     salt = raw[:SALT_SIZE]
     nonce = raw[SALT_SIZE:SALT_SIZE + NONCE_SIZE]
