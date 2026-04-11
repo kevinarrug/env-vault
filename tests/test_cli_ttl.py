@@ -31,6 +31,12 @@ def test_set_ttl_invalid_seconds(runner, vault_dir):
     assert "Error" in result.output
 
 
+def test_set_ttl_negative_seconds(runner, vault_dir):
+    result = runner.invoke(ttl_cmd, ["set", vault_dir, "KEY", "-10"])
+    assert result.exit_code != 0
+    assert "Error" in result.output
+
+
 def test_get_ttl_shows_remaining(runner, vault_dir):
     runner.invoke(ttl_cmd, ["set", vault_dir, "KEY", "120"])
     result = runner.invoke(ttl_cmd, ["get", vault_dir, "KEY"])
