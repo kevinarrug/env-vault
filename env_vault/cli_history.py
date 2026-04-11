@@ -29,6 +29,9 @@ def history_cmd() -> None:
 def log_cmd(key: str, vault_dir: str, passphrase: str) -> None:
     """Show decrypted history for KEY."""
     history_path = Path(vault_dir) / HISTORY_FILENAME
+    if not history_path.exists():
+        click.echo(f"No history file found in '{vault_dir}'.", err=True)
+        sys.exit(1)
     entries = get_history(history_path, key)
     if not entries:
         click.echo(f"No history found for '{key}'.")
@@ -63,5 +66,8 @@ def list_cmd(vault_dir: str) -> None:
 def purge_cmd(key: str, vault_dir: str) -> None:
     """Delete all history entries for KEY."""
     history_path = Path(vault_dir) / HISTORY_FILENAME
+    if not history_path.exists():
+        click.echo(f"No history file found in '{vault_dir}'.", err=True)
+        sys.exit(1)
     purge_key_history(history_path, key)
     click.echo(f"History purged for '{key}'.")
