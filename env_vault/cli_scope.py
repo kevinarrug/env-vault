@@ -86,8 +86,13 @@ def where_cmd(key: str, vault_dir: str) -> None:
 @scope_cmd.command("delete")
 @click.argument("scope")
 @click.option("--vault-dir", default=".", show_default=True)
-def delete_cmd(scope: str, vault_dir: str) -> None:
+@click.option("--yes", "-y", is_flag=True, help="Skip confirmation prompt.")
+def delete_cmd(scope: str, vault_dir: str, yes: bool) -> None:
     """Delete an entire SCOPE."""
+    if not yes:
+        click.confirm(
+            f"Are you sure you want to delete scope '{scope}'?", abort=True
+        )
     deleted = delete_scope(vault_dir, scope)
     if deleted:
         click.echo(f"Scope '{scope}' deleted.")
