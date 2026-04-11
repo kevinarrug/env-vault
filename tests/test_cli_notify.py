@@ -60,6 +60,16 @@ def test_list_empty_shows_message(runner, vault_dir):
     assert "No webhooks" in result.output
 
 
+def test_list_shows_multiple_webhooks(runner, vault_dir):
+    """All registered webhooks should appear in the list output."""
+    runner.invoke(notify_cmd, ["add", "set", "https://a.com", "--vault-dir", vault_dir])
+    runner.invoke(notify_cmd, ["add", "set", "https://b.com", "--vault-dir", vault_dir])
+    result = runner.invoke(notify_cmd, ["list", "--vault-dir", vault_dir])
+    assert result.exit_code == 0
+    assert "https://a.com" in result.output
+    assert "https://b.com" in result.output
+
+
 def test_log_shows_events(runner, vault_dir):
     from env_vault.notify import emit_event
     emit_event(vault_dir, "set", "DB_URL")
