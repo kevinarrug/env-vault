@@ -68,6 +68,15 @@ def all_tags(vault_dir: str) -> Dict[str, List[str]]:
     return _load_tags(vault_dir)
 
 
+def list_all_tag_names(vault_dir: str) -> List[str]:
+    """Return a sorted list of every unique tag in use across all keys."""
+    data = _load_tags(vault_dir)
+    unique_tags: set[str] = set()
+    for tags in data.values():
+        unique_tags.update(tags)
+    return sorted(unique_tags)
+
+
 def clear_tags_for_key(vault_dir: str, key: str) -> None:
     """Remove all tags associated with *key*."""
     data = _load_tags(vault_dir)
