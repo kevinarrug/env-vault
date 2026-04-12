@@ -54,6 +54,16 @@ def test_get_bool_success(runner, vault_dir):
     assert "True" in result.output
 
 
+def test_get_float_success(runner, vault_dir):
+    """Test that a float value is correctly retrieved and cast."""
+    result = runner.invoke(
+        cast_cmd, ["get", vault_dir, "RATE", "float", "--passphrase", "testpass"]
+    )
+    assert result.exit_code == 0
+    assert "RATE" in result.output
+    assert "2.71" in result.output
+
+
 def test_get_invalid_cast_exits_nonzero(runner, vault_dir):
     result = runner.invoke(
         cast_cmd, ["get", vault_dir, "TAGS", "int", "--passphrase", "testpass"]
