@@ -28,6 +28,8 @@ def derive_key(passphrase: str, salt: bytes) -> bytes:
 
 def encrypt(plaintext: str, passphrase: str) -> str:
     """Encrypt plaintext and return a base64-encoded token (salt + nonce + ciphertext)."""
+    if not passphrase:
+        raise ValueError("Passphrase must not be empty.")
     salt = os.urandom(SALT_SIZE)
     nonce = os.urandom(NONCE_SIZE)
     key = derive_key(passphrase, salt)
@@ -39,6 +41,8 @@ def encrypt(plaintext: str, passphrase: str) -> str:
 
 def decrypt(token: str, passphrase: str) -> str:
     """Decrypt a base64-encoded token and return the original plaintext."""
+    if not passphrase:
+        raise ValueError("Passphrase must not be empty.")
     try:
         raw = base64.b64decode(token.encode())
     except Exception as exc:
