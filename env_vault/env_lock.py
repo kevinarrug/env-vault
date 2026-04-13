@@ -16,7 +16,10 @@ def _load_locks(vault_dir: str) -> dict:
     if not p.exists():
         return {}
     with p.open() as f:
-        return json.load(f)
+        try:
+            return json.load(f)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Corrupted lock file at '{p}': {e}") from e
 
 
 def _save_locks(vault_dir: str, data: dict) -> None:
