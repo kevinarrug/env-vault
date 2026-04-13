@@ -93,3 +93,12 @@ def test_all_category_names_returns_unique_sorted(vault_dir):
 
 def test_all_category_names_empty_when_none(vault_dir):
     assert all_category_names(vault_dir) == []
+
+
+def test_remove_category_does_not_affect_other_keys(vault_dir):
+    """Removing one key's category should leave other keys unaffected."""
+    set_category(vault_dir, "DB_HOST", "database")
+    set_category(vault_dir, "DB_PORT", "database")
+    remove_category(vault_dir, "DB_HOST")
+    assert get_category(vault_dir, "DB_PORT") == "database"
+    assert keys_in_category(vault_dir, "database") == ["DB_PORT"]
