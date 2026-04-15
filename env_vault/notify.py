@@ -19,7 +19,10 @@ def _load_hooks(vault_dir: str) -> dict:
     p = _hooks_path(vault_dir)
     if not p.exists():
         return {}
-    return json.loads(p.read_text())
+    try:
+        return json.loads(p.read_text())
+    except (json.JSONDecodeError, OSError):
+        return {}
 
 
 def _save_hooks(vault_dir: str, data: dict) -> None:
@@ -70,9 +73,26 @@ def emit_event(vault_dir: str, event: str, key: str, meta: Optional[dict] = None
 def _append_event_log(vault_dir: str, event: str, key: str, meta: dict) -> None:
     log_path = Path(vault_dir) / ".env_vault" / "notify_log.json"
     log_path.parent.mkdir(parents=True, exist_ok=True)
-    entries = json.loads(log_path.read_text()) if log_path.exists() else []
+    try:
+        entries = json.loads(log_path.read_text()) if log_path.exists() else []
+    except (json.JSONDecodeError, OSError):
+        entries = []
     entries.append({"event": event, "key": key, "meta": meta, "ts": time.time()})
     log_path.write_text(json.dumps(entries[-200:], indent=2))
+
+
+def clear_event_log(vault_dir: str) -> int:
+    """Clear all recorded notification events. Returns the number of entries removed."""
+    log_path = Path(vault_dir) / ".env_vault" / "notify_log.json"
+    if not log_path.exists():
+        return 0
+    try:
+        entries = json.loads(log_path.read_text())
+        count = len(entries)
+    except (json.JSONDecodeError, OSError):
+        count = 0
+    log_path.write_text(json.dumps([], indent=2))
+    return count
 
 
 def get_event_log(vault_dir: str, event: Optional[str] = None) -> List[dict]:
@@ -80,7 +100,10 @@ def get_event_log(vault_dir: str, event: Optional[str] = None) -> List[dict]:
     log_path = Path(vault_dir) / ".env_vault" / "notify_log.json"
     if not log_path.exists():
         return []
-    entries = json.loads(log_path.read_text())
+    try:
+        entries = json.loads(log_path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return []
     if event:
         entries = [e for e in entries if e["event"] == event]
     return entries
