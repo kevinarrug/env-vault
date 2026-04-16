@@ -1,10 +1,11 @@
-"""Root CLI entry point for env-vault."""
+"""Main CLI entry point for env-vault."""
 import click
+
 from env_vault.cli_export import export_cmd, import_cmd
 from env_vault.cli_history import history_cmd
-from env_vault.cli_rotate import rotate_cmd
 from env_vault.cli_audit import audit_cmd
 from env_vault.cli_diff import diff_cmd
+from env_vault.cli_rotate import rotate_cmd
 from env_vault.cli_tags import tags_cmd
 from env_vault.cli_backup import backup_cmd
 from env_vault.cli_profile import profile_cmd
@@ -39,24 +40,26 @@ from env_vault.cli_visibility import visibility_cmd
 from env_vault.cli_changelog import changelog_cmd
 from env_vault.cli_type import type_cmd
 from env_vault.cli_retention import retention_cmd
-from env_vault.cli_pin import pin_cmd
-from env_vault.cli_template import template_cmd
-from env_vault.cli_lint import lint_cmd
 from env_vault.cli_checksum import checksum_cmd
+from env_vault.cli_namespace import namespace_cmd
+from env_vault.cli_trigger import trigger_cmd
+from env_vault.cli_rating import rating_cmd
+from env_vault.cli_severity import severity_cmd
+from env_vault.cli_pin import pin_cmd
+from env_vault.cli_flag import flag_cmd
 
 
 @click.group()
-@click.version_option()
 def cli():
-    """env-vault: encrypt and version your environment variables."""
+    """env-vault: encrypt and version environment variables."""
 
 
 cli.add_command(export_cmd, "export")
 cli.add_command(import_cmd, "import")
 cli.add_command(history_cmd, "history")
-cli.add_command(rotate_cmd, "rotate")
 cli.add_command(audit_cmd, "audit")
 cli.add_command(diff_cmd, "diff")
+cli.add_command(rotate_cmd, "rotate")
 cli.add_command(tags_cmd, "tags")
 cli.add_command(backup_cmd, "backup")
 cli.add_command(profile_cmd, "profile")
@@ -91,7 +94,10 @@ cli.add_command(visibility_cmd, "visibility")
 cli.add_command(changelog_cmd, "changelog")
 cli.add_command(type_cmd, "type")
 cli.add_command(retention_cmd, "retention")
-cli.add_command(pin_cmd, "pin")
-cli.add_command(template_cmd, "template")
-cli.add_command(lint_cmd, "lint")
 cli.add_command(checksum_cmd, "checksum")
+cli.add_command(namespace_cmd, "namespace")
+cli.add_command(trigger_cmd, "trigger")
+cli.add_command(rating_cmd, "rating")
+cli.add_command(severity_cmd, "severity")
+cli.add_command(pin_cmd, "pin")
+cli.add_command(flag_cmd, "flag")
